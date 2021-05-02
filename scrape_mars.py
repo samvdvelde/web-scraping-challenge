@@ -12,7 +12,6 @@ from IPython.display import HTML
 
 def scrape():
 
-    def init_browser():
     executable_path = {'executable_path': ChromeDriverManager().install()}
     browser = Browser('chrome', **executable_path, headless=False)
 
@@ -54,8 +53,6 @@ def scrape():
     imagejpg = jpg['src']
     print(imagejpg)
 
-
-    # Can't find image url in the html
 
 
     featured_image_url = f'https://spaceimages-mars.com/{imagejpg}'
@@ -112,6 +109,7 @@ def scrape():
     hemisphere_image_urls = []
 
 
+    url = 'https://marshemispheres.com/'
 
     for result in results:
         hemititle = result.find('h3').text.rsplit(' ', 1)[0]
@@ -119,26 +117,23 @@ def scrape():
         browser.links.find_by_partial_text(titlefirst).click()
         html = browser.html
         soup = bs(html, 'html.parser')
-        con = soup.find('div', class_='container')
-        cov = con.find('div', class_='cover')
-        desc = cov.find('div', class_='description')
-        dl = desc.find('dl')
-        dd = dl.find('dd')
-        link = dd.find('a')
-        href = link['href']
+        img = soup.find_all('a')[3]["href"]
+        hemi = {'title': hemititle, 'img_url': url + img}
+        hemisphere_image_urls.append(hemi)
         browser.back()
     
-
-
-    hemisphere_image_urls = [
-        {"title":"Cerberus Hemisphere", "img_url":'https://marshemispheres.com/images/cerberus_enhanced.tif'},
-        {"title": "Schiaparelli Hemisphere", "img_url": 'https://marshemispheres.com/images/schiaparelli_enhanced.tif'},
-        {"title": "Syrtis Major Hemisphere", "img_url": 'https://marshemispheres.com/images/syrtis_major_enhanced.tif'},
-        {"title": "Valles Marineris Hemisphere", "img_url": 'https://marshemispheres.com/images/valles_marineris_enhanced.tif'}
-    ]
-
+    mars_data = {
+        "news_title": news_title,
+        "news_p": news_p,
+        "featured_image_url": featured_image_url,
+        "marsdata": marsdata.html,
+        "hemisphere_image_urls": hemisphere_image_urls
+    }
 
     browser.quit()
+
+
+    return mars_data
 
 
 

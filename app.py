@@ -18,7 +18,7 @@ def home():
     data = mongo.db.collection.find_one()
 
 
-    return render_template("index.html", mars_data=data)
+    return render_template("index.html", data=data)
 
 
 
